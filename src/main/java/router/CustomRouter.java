@@ -20,9 +20,10 @@ public class CustomRouter {
     public Router publicResources() {
         Router router = new Router();
         router.attach("/ping", PingServerResource.class);
+        router.attach("/register", registerResource.class);
         router.attach("/login", LogInResource.class);
 
-        router.attach("/register", registerResource.class);
+        //TODO moved to have a authentication
         router.attach("/chiefDoctor", ChiefDoctorListResource.class);
         router.attach("/chiefDoctor/{id}", ChiefDoctorResource.class);
 
@@ -36,8 +37,8 @@ public class CustomRouter {
 
         //Patient
         router.attach("/patientSettings/{id}", PatientSettingsResource.class);
+        router.attach("/patient/carb/", PatientCarbListResource.class);
         router.attach("/patient/{patientId}/carb/{carbId}", PatientCarbResource.class);
-        router.attach("/patient/{patientId}/carb/", PatientCarbListResource.class);
         router.attach("/patient/{patientId}/glucose/{glucoseId}", PatientGlucoseResource.class);
         router.attach("/patient/{patientId}/glucose/", PatientGlucoseListResource.class);
         router.attach("/patient/{patientId}/consultation/{consultationId}", PatientConsultationResource.class);
