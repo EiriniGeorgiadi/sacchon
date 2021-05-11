@@ -22,14 +22,5 @@ public class CarbRepository extends Repository<Carb, Long>{
         return Carb.class.getName();
     }
 
-    public Date getSimpleDate(Date date){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = formatter.format(date);
-        try {
-            Date simpleDate= formatter.parse(formattedDate);
-            return simpleDate;
-        } catch (ParseException e) {
-            return null;
-        }
-    }
+
 }

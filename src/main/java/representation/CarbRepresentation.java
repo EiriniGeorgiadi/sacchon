@@ -1,5 +1,6 @@
 package representation;
 
+import Utils.Utils;
 import jpaUtil.JpaUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,7 +48,7 @@ public class CarbRepresentation {
         } else {
             carb.setDate(date);
         }
-        carb.setSimpleDate(carbRepository.getSimpleDate(carb.getDate()));
+        carb.setSimpleDate(Utils.getSimpleDate(carb.getDate()));
 
 
         PatientRepository patientRepository = new PatientRepository(em);

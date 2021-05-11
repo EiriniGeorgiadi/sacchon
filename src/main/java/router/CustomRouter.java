@@ -36,9 +36,9 @@ public class CustomRouter {
         Router router = new Router();
 
         //Patient
-        router.attach("/patientSettings/{id}", PatientSettingsResource.class);
+        router.attach("/patientSettings", PatientSettingsResource.class);
         router.attach("/patient/carb/", PatientCarbListResource.class);
-        router.attach("/patient/{patientId}/carb/{carbId}", PatientCarbResource.class);
+        router.attach("/patient/carb/{carbId}", PatientCarbResource.class);
         router.attach("/patient/{patientId}/glucose/{glucoseId}", PatientGlucoseResource.class);
         router.attach("/patient/{patientId}/glucose/", PatientGlucoseListResource.class);
         router.attach("/patient/{patientId}/consultation/{consultationId}", PatientConsultationResource.class);

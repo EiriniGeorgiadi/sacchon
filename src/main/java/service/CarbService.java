@@ -12,19 +12,20 @@ public class CarbService {
 
     public Carb createCarb(Carb carb){
         carbRepository.save(carb);
-        em.close();
         return carb;
     }
 
     public Carb updateCarb(Carb carb){
         carbRepository.update(carb);
-        em.close();
         return carb;
+    }
+
+    public void deleteCarb(long carbID){
+        carbRepository.delete(carbID);
     }
 
     public Carb getCarbById(long carbID){
         Carb carb = carbRepository.read(carbID);
-        em.close();
         return carb;
     }
 
