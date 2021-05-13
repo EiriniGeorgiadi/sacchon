@@ -22,6 +22,10 @@ public class PatientDto {
         }
         patientRepresentation.setConsultationChanged(patient.isConsultationChanged());
         patientRepresentation.setUri("http://localhost:9000/v1/patient/" + patient.getId());
+        patientRepresentation.setRecentConsultation(patient.getRecentConsultation());
+        patientRepresentation.setRecentGlucose(patient.getRecentGlucose());
+        patientRepresentation.setRecentCarb(patient.getRecentCarb());
+        patientRepresentation.setRole(patient.getRole());
         return patientRepresentation;
     }
 
@@ -41,6 +45,11 @@ public class PatientDto {
             doctor.setId(patientRepresentation.getDoctorId());
             patient.setDoctor(doctor);
         }
+        patient.setRecentConsultation(patientRepresentation.getRecentConsultation());
+        patient.setRecentGlucose(patientRepresentation.getRecentGlucose());
+        patient.setRecentCarb(patientRepresentation.getRecentCarb());
+        patient.setRole(patientRepresentation.getRole());
+
         return patient;
     }
 }

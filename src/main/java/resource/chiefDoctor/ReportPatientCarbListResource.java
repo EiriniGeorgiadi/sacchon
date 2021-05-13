@@ -1,5 +1,6 @@
 package resource.chiefDoctor;
 
+import dto.CarbDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Carb;
@@ -39,7 +40,7 @@ public class ReportPatientCarbListResource extends ServerResource {
         List<Carb> carbList = patientRepository.getCarbList(patientId, days);
         List<CarbRepresentation> carbRepresentationList = new ArrayList<>();
         for (Carb p : carbList)
-            carbRepresentationList.add(new CarbRepresentation(p));
+            carbRepresentationList.add(CarbDto.transferCarbToCarbRepresentation(p));
         em.close();
         return carbRepresentationList;
     }

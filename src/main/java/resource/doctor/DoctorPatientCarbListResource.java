@@ -1,5 +1,6 @@
 package resource.doctor;
 
+import dto.CarbDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Carb;
@@ -35,7 +36,7 @@ public class DoctorPatientCarbListResource extends ServerResource {
         List<CarbRepresentation> carbRepresentationList = new ArrayList<>();
 
         for (Carb c : carbList) {
-            carbRepresentationList.add(new CarbRepresentation(c));
+            carbRepresentationList.add(CarbDto.transferCarbToCarbRepresentation(c));
         }
 
         em.close();
@@ -48,11 +49,11 @@ public class DoctorPatientCarbListResource extends ServerResource {
         if (carbRepresentationIn == null) return null;
 
         carbRepresentationIn.setPatientId(this.patientId);
-        Carb carb = carbRepresentationIn.createCarb();
+        Carb carb = CarbDto.transferCarbRepresentationToCarb(carbRepresentationIn);
         EntityManager em = JpaUtil.getEntityManager();
         CarbRepository carbRepository = new CarbRepository(em);
         carbRepository.save(carb);
-        CarbRepresentation c = new CarbRepresentation(carb);
+        CarbRepresentation c = CarbDto.transferCarbToCarbRepresentation(carb);
         return c;
     }
 

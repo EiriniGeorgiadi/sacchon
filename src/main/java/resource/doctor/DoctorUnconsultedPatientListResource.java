@@ -1,5 +1,6 @@
 package resource.doctor;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -31,7 +32,7 @@ public class DoctorUnconsultedPatientListResource extends ServerResource {
         List<PatientRepresentation> patientRepresentationList = new ArrayList<>();
 
         for (Patient patient : patientList) {
-            patientRepresentationList.add(new PatientRepresentation(patient));
+            patientRepresentationList.add(PatientDto.transferPatientToPatientRepresentation(patient));
         }
 
         em.close();

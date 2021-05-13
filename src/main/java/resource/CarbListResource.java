@@ -1,5 +1,6 @@
 package resource;
 
+import dto.CarbDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Carb;
@@ -26,7 +27,7 @@ public class CarbListResource extends ServerResource {
 
         List<CarbRepresentation> carbRepresentationList = new ArrayList<>();
         for (Carb p : carbs)
-            carbRepresentationList.add(new CarbRepresentation(p));
+            carbRepresentationList.add(CarbDto.transferCarbToCarbRepresentation(p));
 
         return carbRepresentationList;
     }
@@ -36,13 +37,13 @@ public class CarbListResource extends ServerResource {
         ResourceUtils.checkRole(this, Shield.ROLE_CHIEF_DOCTOR);
         if (carbRepresentationIn == null) return null;
 
-        Carb carb = carbRepresentationIn.createCarb();
+        Carb carb = CarbDto.transferCarbRepresentationToCarb(carbRepresentationIn);
         if (carb.getDate() == null) carb.setDate(new Date());
 
         EntityManager em = JpaUtil.getEntityManager();
         CarbRepository carbRepository = new CarbRepository(em);
         carbRepository.save(carb);
-        CarbRepresentation p = new CarbRepresentation(carb);
+        CarbRepresentation p = CarbDto.transferCarbToCarbRepresentation(carb);
         return p;
     }
 }

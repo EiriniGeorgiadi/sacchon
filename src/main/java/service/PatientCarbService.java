@@ -1,92 +1,85 @@
 package service;
 
+import dto.CarbDto;
 import jpaUtil.JpaUtil;
 import model.Carb;
-import model.Patient;
-import repository.CarbRepository;
 import repository.PatientRepository;
 import representation.CarbRepresentation;
-import resource.ResourceUtils;
-import security.Shield;
+import representation.PatientRepresentation;
 
 import javax.persistence.EntityManager;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PatientCarbService {
-    EntityManager em = JpaUtil.getEntityManager();
-    PatientRepository patientRepository = new PatientRepository(em);
 
-
-    public List<CarbRepresentation> getPatientCarbList(long patientId){
+    public static List<CarbRepresentation> getPatientCarbList(long patientId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        PatientRepository patientRepository = new PatientRepository(em);
         List<Carb> carbList = patientRepository.getCarbList(patientId);
         List<CarbRepresentation> carbRepresentationList = new ArrayList<>();
 
         for (Carb c : carbList) {
-            carbRepresentationList.add(new CarbRepresentation(c));
+            carbRepresentationList.add(CarbDto.transferCarbToCarbRepresentation(c));
         }
+        em.close();
         return carbRepresentationList;
     }
 
-    public CarbRepresentation getCarb(long patientId,long carbId){
-        CarbService carbService = new CarbService();
-        Carb carb = carbService.getCarbById(carbId);
-        if (!(carb.getPatient().getId() == patientId)){
+    public static CarbRepresentation getCarb(long patientId, long carbId) {
+        Carb carb = CarbService.getCarbById(carbId);
+        if (!(carb.getPatient().getId() == patientId)) {
             return null;
-        }else return new CarbRepresentation(carb);
+        } else return CarbDto.transferCarbToCarbRepresentation(carb);
     }
 
-    public CarbRepresentation addPatientCarb(long patientId,CarbRepresentation carbRepresentation){
+    public static CarbRepresentation addPatientCarb(long patientId, CarbRepresentation carbRepresentation) {
         if (carbRepresentation == null) return null;
 
         //add a carb in the database
-        Carb carb = addCarb(carbRepresentation, patientId);
+        carbRepresentation = addCarb(carbRepresentation, patientId);
 
         // update the Last Carb in Patient table
-        PatientService patientService = new PatientService();
-        Patient patient = patientService.getPatientById(patientId);
-        updatePatientResendCarb(carb,patient);
+        PatientRepresentation patientRepresentation = PatientService.getPatient(patientId);
+        updatePatientResendCarb(carbRepresentation, patientRepresentation);
 
-        return new CarbRepresentation(carb);
+        return carbRepresentation;
     }
 
-    public CarbRepresentation editCarb (long patientId,CarbRepresentation carbRepresentation,long carbId){
+    public static CarbRepresentation editCarb(long patientId, CarbRepresentation carbRepresentation, long carbId) {
         if (carbRepresentation == null) return null;
-        if (carbRepresentation.getId() !=0 && carbRepresentation.getId()!=carbId) return null;
+        if (carbRepresentation.getId() != 0 && carbRepresentation.getId() != carbId) return null;
 
-        CarbService carbService =new CarbService();
-        long expectedPatientID = carbService.getCarbById(carbId).getPatient().getId();
+        long expectedPatientID = CarbService.getCarbById(carbId).getPatient().getId();
         if (!(expectedPatientID == patientId)) {
             return null;
         }
 
         carbRepresentation.setId(carbId);
         carbRepresentation.setPatientId(patientId);
-        Carb carb = carbService.updateCarb(carbRepresentation.createCarb());
-        return new CarbRepresentation(carb);
+        carbRepresentation = CarbService.updateCarb(carbRepresentation);
+        return carbRepresentation;
     }
 
-    public boolean deleteCarb (long patientId,long carbId) {
-        CarbService carbService = new CarbService();
-        long expectedPatientID = carbService.getCarbById(carbId).getPatient().getId();
+    public static boolean deleteCarb(long patientId, long carbId) {
+        long expectedPatientID = CarbService.getCarbById(carbId).getPatient().getId();
         if (!(expectedPatientID == patientId)) {
             return false;
         }
-        carbService.deleteCarb(carbId);
+        CarbService.deleteCarb(carbId);
         return true;
     }
 
-        private Carb addCarb(CarbRepresentation carbRepresentation,long patientId){
+    private static CarbRepresentation addCarb(CarbRepresentation carbRepresentation, long patientId) {
         carbRepresentation.setPatientId(patientId);
-        Carb carb = carbRepresentation.createCarb();
-        CarbService carbService = new CarbService();
-        return carbService.createCarb(carb);
+        return CarbService.createCarb(carbRepresentation);
     }
 
 
-    private void updatePatientResendCarb(Carb carb, Patient patient){
-        patient.setRecentCarb(carb.getDate());
-        PatientService patientService = new PatientService();
-        patientService.updatePatient(patient);
+    private static void updatePatientResendCarb(CarbRepresentation carbRepresentation, PatientRepresentation patientRepresentation) {
+        patientRepresentation.setRecentCarb(Date.from(ZonedDateTime.now().toInstant()));
+        PatientService.updatePatient(patientRepresentation.getId(), patientRepresentation);
     }
 }

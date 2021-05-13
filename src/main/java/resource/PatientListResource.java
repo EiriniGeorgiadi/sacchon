@@ -1,5 +1,6 @@
 package resource;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -27,8 +28,7 @@ public class PatientListResource extends ServerResource {
 
         List<PatientRepresentation> patientRepresentationList = new ArrayList<>();
         for (Patient p : patients)
-            patientRepresentationList.add(new PatientRepresentation(p));
-
+            patientRepresentationList.add(PatientDto.transferPatientToPatientRepresentation(p));
         return patientRepresentationList;
     }
 
@@ -39,12 +39,12 @@ public class PatientListResource extends ServerResource {
         if (patientRepresentationIn.getUsername() == null) return null;
         if (patientRepresentationIn.getPassword() == null) return null;
 
-        Patient patient = patientRepresentationIn.createPatient();
+        Patient patient = PatientDto.transferPatientRepresentationToPatient(patientRepresentationIn);
         if (patientRepresentationIn.getDateRegistered() == null) patient.setDateRegistered(new Date());
         EntityManager em = JpaUtil.getEntityManager();
         PatientRepository patientRepository = new PatientRepository(em);
         patientRepository.save(patient);
-        PatientRepresentation p = new PatientRepresentation(patient);
+        PatientRepresentation p = PatientDto.transferPatientToPatientRepresentation(patient);
         return p;
     }
 }

@@ -1,5 +1,6 @@
 package service;
 
+import dto.PatientDto;
 import jpaUtil.JpaUtil;
 import model.Patient;
 import repository.PatientRepository;
@@ -8,52 +9,51 @@ import representation.PatientRepresentation;
 import javax.persistence.EntityManager;
 
 public class PatientService {
-    EntityManager em = JpaUtil.getEntityManager();
-    PatientRepository patientRepository = new PatientRepository(em);
 
 
-    public long getPatientIdByPassword(String username){
+
+    public static long getPatientIdByUsername(String username){
+        EntityManager em = JpaUtil.getEntityManager();
+        PatientRepository patientRepository = new PatientRepository(em);
         long id =  patientRepository.getByUsername(username).getId();
+        em.close();
         return id;
     }
 
-    public Patient addPatient(Patient patient){
-        PatientRepository patientRepository = new PatientRepository(em);
-        patientRepository.save(patient);
-        return patient;
-    }
 
-    public PatientRepresentation getPatient(long patientID){
+    public static PatientRepresentation getPatient(long patientID){
+        EntityManager em = JpaUtil.getEntityManager();
+        PatientRepository patientRepository = new PatientRepository(em);
         Patient patient = patientRepository.read(patientID);
-        PatientRepresentation patientRepresentation = new PatientRepresentation(patient);
+        PatientRepresentation patientRepresentation = PatientDto.transferPatientToPatientRepresentation(patient);
+        em.close();
         return patientRepresentation;
     }
 
-    public void deletePatient(long patientID){
+    public static void deletePatient(long patientID){
+        EntityManager em = JpaUtil.getEntityManager();
+        PatientRepository patientRepository = new PatientRepository(em);
         patientRepository.delete(patientID);
+        em.close();
     }
 
-    public PatientRepresentation updatePatient (long patientID, PatientRepresentation patientRepresentation){
+    public static PatientRepresentation updatePatient (long patientID, PatientRepresentation patientRepresentation){
         if (patientRepresentation == null) return null;
-
-        Patient patient = patientRepresentation.createPatient();
+        EntityManager em = JpaUtil.getEntityManager();
+        PatientRepository patientRepository = new PatientRepository(em);
 
         //get the stored patient from the database
-        Patient storedPatient = getPatientById(patientID);
+        PatientRepresentation storedPatientRep = getPatient(patientID);
 
-        patient.setId(patientID);
-        patient.setDateRegistered(storedPatient.getDateRegistered());
+        patientRepresentation.setId(patientID);
+        patientRepresentation.setDateRegistered(storedPatientRep.getDateRegistered());
+        if (patientRepresentation.getRecentCarb()==null) patientRepresentation.setRecentCarb(storedPatientRep.getRecentCarb());
+        if (patientRepresentation.getRecentGlucose()==null) patientRepresentation.setRecentGlucose(storedPatientRep.getRecentGlucose());
+        if (patientRepresentation.getRecentConsultation()==null)patientRepresentation.setRecentConsultation(storedPatientRep.getRecentConsultation());
+        Patient patient = PatientDto.transferPatientRepresentationToPatient(patientRepresentation);
         patientRepository.update(patient);
-        return new PatientRepresentation(patient);
+        em.close();
+        return PatientDto.transferPatientToPatientRepresentation(patient);
     }
 
-    public Patient updatePatient(Patient patient){
-        patientRepository.update(patient);
-        return patient;
-    }
-
-    public Patient getPatientById(long patientId){
-        Patient patient = patientRepository.read(patientId);
-        return patient;
-    }
 }

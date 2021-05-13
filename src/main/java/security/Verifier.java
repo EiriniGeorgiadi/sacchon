@@ -4,6 +4,7 @@ import jpaUtil.JpaUtil;
 import model.ChiefDoctor;
 import model.Doctor;
 import model.Patient;
+import model.User;
 import org.restlet.Request;
 import org.restlet.security.Role;
 import org.restlet.security.SecretVerifier;
@@ -14,54 +15,46 @@ import repository.PatientRepository;
 import javax.persistence.EntityManager;
 
 public class Verifier extends SecretVerifier {
-    public int verify(String username, char[] password) {
-        //check db for user
-        EntityManager em = JpaUtil.getEntityManager();
 
+    public int verify(String username, char[] password) {
+        EntityManager em = JpaUtil.getEntityManager();
+        int result =SecretVerifier.RESULT_INVALID;
+        //check db for user
         PatientRepository patientRepository = new PatientRepository(em);
         Patient patient = patientRepository.getByUsername(username);
-        if (patient != null) {
-            if (patient.getUsername().equals(username)) {
-                String passwordInDb = patient.getPassword();
-                if (compare(passwordInDb.toCharArray(), password)) {
-                    Request request = Request.getCurrent();
-                    request.getClientInfo().getRoles().add
-                            (new Role(patient.getRole()));
-                    em.close();
-                    return SecretVerifier.RESULT_VALID;
-                }
-            }
-        }
+        if (checkRole(patient,username,password,"patient")) result= SecretVerifier.RESULT_VALID;
+
         DoctorRepository doctorRepository = new DoctorRepository(em);
         Doctor doctor = doctorRepository.getByUsername(username);
-        if (doctor != null) {
-            if (doctor.getUsername().equals(username)) {
-                String passwordInDb = doctor.getPassword();
-                if (compare(passwordInDb.toCharArray(), password)) {
-                    Request request = Request.getCurrent();
-                    request.getClientInfo().getRoles().add
-                            (new Role(doctor.getRole()));
-                    em.close();
-                    return SecretVerifier.RESULT_VALID;
-                }
-            }
-        }
+        if (checkRole(doctor,username,password,"doctor")) result= SecretVerifier.RESULT_VALID;
 
         ChiefDoctorRepository chiefDoctorRepository = new ChiefDoctorRepository(em);
         ChiefDoctor chiefDoctor = chiefDoctorRepository.getByUsername(username);
-        if (chiefDoctor != null) {
-            if (chiefDoctor.getUsername().equals(username)) {
-                String passwordInDb = chiefDoctor.getPassword();
-                if (compare(passwordInDb.toCharArray(), password)) {
-                    Request request = Request.getCurrent();
-                    request.getClientInfo().getRoles().add
-                            (new Role(chiefDoctor.getRole()));
-                    em.close();
-                    return SecretVerifier.RESULT_VALID;
-                }
-            }
-        }
+        if (checkRole(chiefDoctor,username,password,"chiefDoctor")) result = SecretVerifier.RESULT_VALID;
+
         em.close();
-        return SecretVerifier.RESULT_INVALID;
+        return result;
+    }
+
+    private boolean checkRole(User user, String username, char[] password, String role){
+        if (verifyUser(user,username,password)) {
+            setRole(role);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean verifyUser(User user, String username, char[] password){
+        if (user == null) return false;
+//            if (user.getUsername().equals(username)) {
+        String passwordInDb = user.getPassword();
+        return (compare(passwordInDb.toCharArray(), password) && user.getUsername().equals(username)) ?  true :  false;
+
+    }
+
+    private void setRole(String role){
+        Request request = Request.getCurrent();
+        request.getClientInfo().getRoles().add
+                    (new Role(role));
     }
 }

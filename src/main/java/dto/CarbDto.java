@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class CarbDto {
-    public static CarbRepresentation transferCarbRepresentationToCarb(Carb carb){
+    public static CarbRepresentation transferCarbToCarbRepresentation(Carb carb){
         CarbRepresentation carbRepresentation = new CarbRepresentation();
         carbRepresentation.setId(carb.getId());
         carbRepresentation.setCarb(carb.getCarb());
@@ -21,14 +21,14 @@ public class CarbDto {
 
     public static Carb transferCarbRepresentationToCarb(CarbRepresentation carbRepresentation){
         Carb carb = new Carb();
-
+        carb.setId(carbRepresentation.getId());
         carb.setCarb(carbRepresentation.getCarb());
         if (carbRepresentation.getDate() == null) {
             carb.setDate(Date.from(ZonedDateTime.now().minusDays(carbRepresentation.getDateOffsetDays()).toInstant()));
         } else {
             carb.setDate(carbRepresentation.getDate());
         }
-        carb.setSimpleDate(Utils.getSimpleDate(carbRepresentation.getDate()));
+        carb.setSimpleDate(Utils.getSimpleDate(carb.getDate()));
         if(carbRepresentation.getPatientId()!=0){
             Patient patient = new Patient();
             patient.setId(carbRepresentation.getPatientId());

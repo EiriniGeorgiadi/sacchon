@@ -20,24 +20,19 @@ public class PatientCarbListResource extends ServerResource {
     protected void doInit() {
         Request req = Request.getCurrent();
         Authentication authentication = new Authentication(req);
-
-        PatientService patientService= new  PatientService();
-        patientId = patientService.getPatientIdByPassword(authentication.getUsername());
+        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
     }
-
 
     @Get("json")
     public List<CarbRepresentation> getCarbList() throws AuthorizationException {
         ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        PatientCarbService patientCarbService = new PatientCarbService();
-        return patientCarbService.getPatientCarbList(patientId);
+        return PatientCarbService.getPatientCarbList(patientId);
     }
 
     @Post("json")
     public CarbRepresentation addCarb(CarbRepresentation carbRepresentationIn) throws AuthorizationException {
         ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        PatientCarbService patientCarbService = new PatientCarbService();
-        return patientCarbService.addPatientCarb(patientId,carbRepresentationIn);
+        return PatientCarbService.addPatientCarb(patientId, carbRepresentationIn);
     }
 
 }

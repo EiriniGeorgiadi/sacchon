@@ -1,5 +1,6 @@
 package resource.doctor;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -32,7 +33,7 @@ public class DoctorPatientListResource extends ServerResource {
         List<PatientRepresentation> patientRepresentationList = new ArrayList<>();
 
         for (Patient patient : patientList) {
-            patientRepresentationList.add(new PatientRepresentation(patient));
+            patientRepresentationList.add(PatientDto.transferPatientToPatientRepresentation(patient));
         }
 
         em.close();
@@ -47,11 +48,11 @@ public class DoctorPatientListResource extends ServerResource {
 
         EntityManager em = JpaUtil.getEntityManager();
         patientRepresentationIn.setDoctorId(this.doctorId);
-        Patient patient = patientRepresentationIn.createPatient();
+        Patient patient = PatientDto.transferPatientRepresentationToPatient(patientRepresentationIn);
 
         PatientRepository patientRepository = new PatientRepository(em);
         patientRepository.save(patient);
-        PatientRepresentation p = new PatientRepresentation(patient);
+        PatientRepresentation p = PatientDto.transferPatientToPatientRepresentation(patient);
         return p;
     }
 }

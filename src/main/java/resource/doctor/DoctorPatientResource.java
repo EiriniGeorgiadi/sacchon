@@ -1,5 +1,6 @@
 package resource.doctor;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -35,7 +36,7 @@ public class DoctorPatientResource extends ServerResource {
             }
         }
 
-        PatientRepresentation patientRepresentation = new PatientRepresentation(patient);
+        PatientRepresentation patientRepresentation = PatientDto.transferPatientToPatientRepresentation(patient);
         em.close();
 
         return patientRepresentation;

@@ -1,5 +1,6 @@
 package resource;
 
+import dto.CarbDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Carb;
@@ -25,7 +26,7 @@ public class CarbResource extends ServerResource {
         EntityManager em = JpaUtil.getEntityManager();
         CarbRepository carbRepository = new CarbRepository(em);
         Carb carb = carbRepository.read(id);
-        CarbRepresentation carbRepresentation = new CarbRepresentation(carb);
+        CarbRepresentation carbRepresentation = CarbDto.transferCarbToCarbRepresentation(carb);
         em.close();
         return carbRepresentation;
     }

@@ -1,5 +1,6 @@
 package resource;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -21,12 +22,12 @@ public class registerResource extends ServerResource {
         if (patientRepresentationIn.getUsername() == null) return null;
         if (patientRepresentationIn.getPassword() == null) return null;
 
-        Patient patient = patientRepresentationIn.createPatient();
+        Patient patient = PatientDto.transferPatientRepresentationToPatient(patientRepresentationIn);
         if (patientRepresentationIn.getDateRegistered() == null) patient.setDateRegistered(new Date());
         EntityManager em = JpaUtil.getEntityManager();
         PatientRepository patientRepository = new PatientRepository(em);
         patientRepository.save(patient);
-        PatientRepresentation p = new PatientRepresentation(patient);
+        PatientRepresentation p = PatientDto.transferPatientToPatientRepresentation(patient);
         em.close();
         return p;
     }

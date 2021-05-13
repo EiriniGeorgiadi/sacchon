@@ -1,5 +1,6 @@
 package resource.doctor;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -37,7 +38,7 @@ public class DoctorNeedConsultationPatientResource extends ServerResource {
                 patient = p;
             }
         }
-        PatientRepresentation patientRepresentation = new PatientRepresentation(patient);
+        PatientRepresentation patientRepresentation = PatientDto.transferPatientToPatientRepresentation(patient);
 
         em.close();
 
@@ -49,7 +50,7 @@ public class DoctorNeedConsultationPatientResource extends ServerResource {
         ResourceUtils.checkRole(this, Shield.ROLE_DOCTOR);
         EntityManager em = JpaUtil.getEntityManager();
         PatientRepository patientRepository = new PatientRepository(em);
-        Patient patient = patientRepresentation.createPatient();
+        Patient patient = PatientDto.transferPatientRepresentationToPatient(patientRepresentation);
         em.detach(patient);
         patient.setId(needConsultationPatientId);
         patientRepository.update(patient);

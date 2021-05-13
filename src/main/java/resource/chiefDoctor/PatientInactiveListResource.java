@@ -1,5 +1,6 @@
 package resource.chiefDoctor;
 
+import dto.PatientDto;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Patient;
@@ -45,7 +46,7 @@ public class PatientInactiveListResource extends ServerResource {
                 Patient c = carbIterator.next();
                 Patient g = glucoseIterator.next();
                 if (c != null && g != null) {
-                    patientRepresentationList.add(new PatientRepresentation(c));
+                    patientRepresentationList.add(PatientDto.transferPatientToPatientRepresentation(c));
                 }
             }
         }
