@@ -4,6 +4,7 @@ import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Glucose;
 import model.Patient;
+import org.restlet.Request;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -11,7 +12,9 @@ import repository.GlucoseRepository;
 import repository.PatientRepository;
 import representation.GlucoseRepresentation;
 import resource.ResourceUtils;
+import security.Authentication;
 import security.Shield;
+import service.PatientService;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -21,7 +24,10 @@ public class PatientGlucoseListResource extends ServerResource {
     private long patientId;
 
     protected void doInit() {
-        patientId = Long.parseLong(getAttribute("patientId"));
+        Request req = Request.getCurrent();
+        Authentication authentication = new Authentication(req);
+
+        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
     }
 
 

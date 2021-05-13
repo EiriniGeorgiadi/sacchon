@@ -2,11 +2,14 @@ package resource.patient;
 
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
+import org.restlet.Request;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import repository.PatientRepository;
 import resource.ResourceUtils;
+import security.Authentication;
 import security.Shield;
+import service.PatientService;
 
 import javax.persistence.EntityManager;
 import java.util.Date;
@@ -16,8 +19,10 @@ public class PatientCarbDailyAverageResource extends ServerResource {
     private long patientId;
 
     protected void doInit() {
+        Request req = Request.getCurrent();
+        Authentication authentication = new Authentication(req);
 
-        patientId = Long.parseLong(getAttribute("patientId"));
+        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
     }
 
     @Get

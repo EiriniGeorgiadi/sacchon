@@ -3,6 +3,7 @@ package resource.patient;
 import exception.AuthorizationException;
 import jpaUtil.JpaUtil;
 import model.Consultation;
+import org.restlet.Request;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -10,7 +11,9 @@ import repository.ConsultationRepository;
 import repository.PatientRepository;
 import representation.ConsultationRepresentation;
 import resource.ResourceUtils;
+import security.Authentication;
 import security.Shield;
+import service.PatientService;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -20,7 +23,11 @@ public class PatientConsultationListResource extends ServerResource {
     private long patientId;
 
     protected void doInit() {
-        patientId = Long.parseLong(getAttribute("patientId"));
+
+        Request req = Request.getCurrent();
+        Authentication authentication = new Authentication(req);
+
+        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
     }
 
 

@@ -39,13 +39,13 @@ public class CustomRouter {
         router.attach("/patientSettings", PatientSettingsResource.class);
         router.attach("/patient/carb/", PatientCarbListResource.class);
         router.attach("/patient/carb/{carbId}", PatientCarbResource.class);
-        router.attach("/patient/{patientId}/glucose/{glucoseId}", PatientGlucoseResource.class);
-        router.attach("/patient/{patientId}/glucose/", PatientGlucoseListResource.class);
-        router.attach("/patient/{patientId}/consultation/{consultationId}", PatientConsultationResource.class);
-        router.attach("/patient/{patientId}/consultation/", PatientConsultationListResource.class);
-        router.attach("/patientCarbDailyAverage/{patientId}", PatientCarbDailyAverageResource.class); //get
-        router.attach("/patientCarbAverage/{patientId}", PatientCarbAverageResource.class);
-        router.attach("/patientGlucoseAverage/{patientId}", PatientGlucoseAverageResource.class); //get
+        router.attach("/patient/glucose/{glucoseId}", PatientGlucoseResource.class);
+        router.attach("/patient/glucose/", PatientGlucoseListResource.class);
+        router.attach("/patient/consultation/{consultationId}", PatientConsultationResource.class);
+        router.attach("/patient/consultation/", PatientConsultationListResource.class);
+        router.attach("/patientCarbDailyAverage", PatientCarbDailyAverageResource.class); //get
+        router.attach("/patientCarbAverage", PatientCarbAverageResource.class);
+        router.attach("/patientGlucoseAverage", PatientGlucoseAverageResource.class); //get
 
 
         //Doctor

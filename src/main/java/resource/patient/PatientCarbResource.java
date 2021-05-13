@@ -27,20 +27,33 @@ public class PatientCarbResource extends ServerResource {
 
 
     @Get("json")
-    public CarbRepresentation getCarb() throws AuthorizationException {
-        ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientCarbService.getCarb(patientId,carbId);
+    public CarbRepresentation getCarb(){
+        try {
+            ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
+            return PatientCarbService.getCarb(patientId,carbId);
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException();
+        }
     }
 
     @Put("json")
-    public CarbRepresentation updateCarb(CarbRepresentation carbRepresentation) throws AuthorizationException {
-        ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientCarbService.editCarb(patientId,carbRepresentation,carbId);
+    public CarbRepresentation updateCarb(CarbRepresentation carbRepresentation) {
+        try {
+            ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
+            return PatientCarbService.editCarb(patientId,carbRepresentation,carbId);
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException();
+        }
     }
 
     @Delete("json")
-    public boolean deleteCarb() throws AuthorizationException {
-        ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientCarbService.deleteCarb(patientId,carbId);
+    public CarbRepresentation deleteCarb() throws AuthorizationException {
+        try {
+            ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
+            return PatientCarbService.deleteCarb(patientId,carbId);
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException();
+        }
+
     }
 }

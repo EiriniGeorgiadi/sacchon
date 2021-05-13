@@ -46,7 +46,6 @@ public class Verifier extends SecretVerifier {
 
     private boolean verifyUser(User user, String username, char[] password){
         if (user == null) return false;
-//            if (user.getUsername().equals(username)) {
         String passwordInDb = user.getPassword();
         return (compare(passwordInDb.toCharArray(), password) && user.getUsername().equals(username)) ?  true :  false;
 

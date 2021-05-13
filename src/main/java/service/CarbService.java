@@ -40,12 +40,13 @@ public class CarbService {
         em.close();
     }
 
-    public static Carb getCarbById(long carbID){
+    public static CarbRepresentation getCarbById(long carbID){
         EntityManager em = JpaUtil.getEntityManager();
         CarbRepository carbRepository = new CarbRepository(em);
         Carb carb = carbRepository.read(carbID);
         em.close();
-        return carb;
+        if (carb == null) return null;
+        else return CarbDto.transferCarbToCarbRepresentation(carb);
     }
 
 }

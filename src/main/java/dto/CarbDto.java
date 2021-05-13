@@ -14,7 +14,7 @@ public class CarbDto {
         carbRepresentation.setId(carb.getId());
         carbRepresentation.setCarb(carb.getCarb());
         carbRepresentation.setDate(carb.getDate());
-        carbRepresentation.setPatientId(carb.getPatient().getId());
+        if (carb.getPatient()!= null )carbRepresentation.setPatientId(carb.getPatient().getId());
         carbRepresentation.setUri("http://localhost:9000/v1/carb/" + carb.getId());
         return carbRepresentation;
     }

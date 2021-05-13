@@ -6,6 +6,7 @@ import model.Carb;
 import repository.PatientRepository;
 import representation.CarbRepresentation;
 import representation.PatientRepresentation;
+import rules.CarbRules;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
@@ -29,10 +30,12 @@ public class PatientCarbService {
     }
 
     public static CarbRepresentation getCarb(long patientId, long carbId) {
-        Carb carb = CarbService.getCarbById(carbId);
-        if (!(carb.getPatient().getId() == patientId)) {
+        if (!CarbRules.carbExists(carbId)) return null;
+
+        CarbRepresentation carbRepresentation = CarbService.getCarbById(carbId);
+        if (!CarbRules.patientCanAccessCarb(carbRepresentation,patientId)) {
             return null;
-        } else return CarbDto.transferCarbToCarbRepresentation(carb);
+        } else return carbRepresentation;
     }
 
     public static CarbRepresentation addPatientCarb(long patientId, CarbRepresentation carbRepresentation) {
@@ -50,26 +53,22 @@ public class PatientCarbService {
 
     public static CarbRepresentation editCarb(long patientId, CarbRepresentation carbRepresentation, long carbId) {
         if (carbRepresentation == null) return null;
-        if (carbRepresentation.getId() != 0 && carbRepresentation.getId() != carbId) return null;
-
-        long expectedPatientID = CarbService.getCarbById(carbId).getPatient().getId();
-        if (!(expectedPatientID == patientId)) {
-            return null;
-        }
+        if (!CarbRules.carbExists(carbId)) return null;
 
         carbRepresentation.setId(carbId);
-        carbRepresentation.setPatientId(patientId);
+        carbRepresentation.setPatientId(CarbService.getCarbById(carbId).getPatientId());
+        if (!CarbRules.patientCanAccessCarb(carbRepresentation,patientId)) return null;
+
         carbRepresentation = CarbService.updateCarb(carbRepresentation);
         return carbRepresentation;
     }
 
-    public static boolean deleteCarb(long patientId, long carbId) {
-        long expectedPatientID = CarbService.getCarbById(carbId).getPatient().getId();
-        if (!(expectedPatientID == patientId)) {
-            return false;
-        }
+    public static CarbRepresentation deleteCarb(long patientId, long carbId) {
+        if (!CarbRules.carbExists(carbId)) return null;
+        CarbRepresentation carbRepresentation = CarbService.getCarbById(carbId);
+        if (!CarbRules.patientCanAccessCarb(carbRepresentation,patientId)) return null;
         CarbService.deleteCarb(carbId);
-        return true;
+        return carbRepresentation;
     }
 
     private static CarbRepresentation addCarb(CarbRepresentation carbRepresentation, long patientId) {

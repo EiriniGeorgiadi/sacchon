@@ -4,6 +4,7 @@ import exception.AuthorizationException;
 import org.restlet.Request;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
+import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import representation.CarbRepresentation;
 import resource.ResourceUtils;
@@ -24,15 +25,23 @@ public class PatientCarbListResource extends ServerResource {
     }
 
     @Get("json")
-    public List<CarbRepresentation> getCarbList() throws AuthorizationException {
-        ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientCarbService.getPatientCarbList(patientId);
+    public List<CarbRepresentation> getCarbList(){
+        try {
+            ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
+            return PatientCarbService.getPatientCarbList(patientId);
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException();
+        }
     }
 
     @Post("json")
-    public CarbRepresentation addCarb(CarbRepresentation carbRepresentationIn) throws AuthorizationException {
-        ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientCarbService.addPatientCarb(patientId, carbRepresentationIn);
+    public CarbRepresentation addCarb(CarbRepresentation carbRepresentationIn)  {
+        try {
+            ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
+            return PatientCarbService.addPatientCarb(patientId, carbRepresentationIn);
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException();
+        }
     }
 
 }
