@@ -2,10 +2,13 @@ package rules;
 
 import representation.CarbRepresentation;
 import service.CarbService;
+import service.impl.CarbServiceImpl;
 
 public class CarbRules {
+
     public static boolean carbExists(Long carbID){
-        if (CarbService.getCarbById(carbID)==null) return false;
+        CarbService carbService = new CarbServiceImpl();
+        if (carbService.getCarbById(carbID)==null) return false;
         else return true;
     }
 

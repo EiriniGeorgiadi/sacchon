@@ -10,6 +10,7 @@ import resource.ResourceUtils;
 import security.Authentication;
 import security.Shield;
 import service.PatientService;
+import service.impl.PatientServiceImpl;
 
 import javax.persistence.EntityManager;
 import java.util.Date;
@@ -17,12 +18,14 @@ import java.util.List;
 
 public class PatientCarbDailyAverageResource extends ServerResource {
     private long patientId;
+    private PatientService patientService;
 
     protected void doInit() {
+        patientService= new PatientServiceImpl();
+
         Request req = Request.getCurrent();
         Authentication authentication = new Authentication(req);
-
-        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
+        patientId = patientService.getPatientIdByUsername(authentication.getUsername());
     }
 
     @Get

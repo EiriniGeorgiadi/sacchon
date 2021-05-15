@@ -12,6 +12,7 @@ import resource.ResourceUtils;
 import security.Authentication;
 import security.Shield;
 import service.PatientService;
+import service.impl.PatientServiceImpl;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,12 +20,15 @@ import java.util.List;
 public class PatientConsultationResource extends ServerResource {
     private long patientId;
     private long consultationId;
+    private PatientService patientService;
+
 
     protected void doInit() {
+        patientService= new PatientServiceImpl();
+
         Request req = Request.getCurrent();
         Authentication authentication = new Authentication(req);
-
-        patientId = PatientService.getPatientIdByUsername(authentication.getUsername());
+        patientId = patientService.getPatientIdByUsername(authentication.getUsername());
         consultationId = Long.parseLong(getAttribute("consultationId"));
     }
 

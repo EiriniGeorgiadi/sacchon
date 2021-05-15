@@ -11,29 +11,31 @@ import resource.ResourceUtils;
 import security.Authentication;
 import security.Shield;
 import service.PatientService;
+import service.impl.PatientServiceImpl;
 
 public class PatientSettingsResource extends ServerResource {
     private long id;
+    private PatientService patientService;
 
     protected void doInit() {
+        patientService= new PatientServiceImpl();
 
         Request req = Request.getCurrent();
         Authentication authentication = new Authentication(req);
-
-        id = PatientService.getPatientIdByUsername(authentication.getUsername());
+        id = patientService.getPatientIdByUsername(authentication.getUsername());
     }
 
 
     @Get("json")
     public PatientRepresentation getPatient() throws AuthorizationException {
         ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        return PatientService.getPatient(id);
+        return patientService.getPatient(id);
     }
 
     @Put("json")
     public PatientRepresentation updatePatient(PatientRepresentation patientRepresentation) throws AuthorizationException {
         ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-       return PatientService.updatePatient(id, patientRepresentation);
+       return patientService.updatePatient(id, patientRepresentation);
     }
 
 
@@ -41,7 +43,7 @@ public class PatientSettingsResource extends ServerResource {
     @Delete("json")
     public void deletePatient() throws AuthorizationException {
         ResourceUtils.checkRole(this, Shield.ROLE_PATIENT);
-        PatientService.deletePatient(id);
+        patientService.deletePatient(id);
     }
 
 }
